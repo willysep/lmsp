@@ -1,8 +1,40 @@
 @extends('layouts.main')
 
 @section('content')
+    {{-- success flash --}}
+    @if (Session::has('success'))
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">Success</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {{ Session::get('success') }}
+            </div>
+        </div>
+    @endif
+
+    {{-- failed flash --}}
+    @if (Session::has('failed'))
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">Failed</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                Error Message : <b>{{ Session::get('failed') }}</b>
+            </div>
+        </div>
+    @endif
+
     {{-- main card of letter --}}
-    <div class="card col-lg-4 col-md-6">
+    <div class="card col-lg-5 col-md-6">
         <div class="card-header">
             <h3 class="card-title">
                 Detail of Letter Number <b>{{ $letter->letterNumber }}</b>
@@ -49,13 +81,21 @@
                 <button class="btn btn-danger" id="cancel">
                     <i class="fas fa-ban"></i>
                     Cancel Booking</button>
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">
                     <i class="fas fa-upload"></i>
                     Upload Archive
                 </button>
+            @elseif($letter->status->id == 3)
+                <a href="{{ asset('storage/' . $letter->archive) }}" class="btn btn-outline-success" 
+                    target="_blank">
+                    <i class="fas fa-download"></i>
+                    Download Archive
+                </a>
             @endif
         </div>
     </div>
+
+    @include('letters.uploadArchive')
 @endsection
 
 @section('style')
@@ -63,7 +103,17 @@
 @endsection
 
 @section('script')
+    <script src='{{ asset('/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}'></script>
     <script src='{{ asset('/plugins/sweetalert2/sweetalert2.all.min.js') }}'></script>
+    <script>
+        $(function() {
+            bsCustomFileInput.init();
+
+            @if (old() != null)
+                $('#uploadModal').modal('show');
+            @endif
+        });
+    </script>
     <script>
         $('#cancel').click(function(e) {
             Swal.fire({

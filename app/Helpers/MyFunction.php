@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use Dotenv\Util\Str;
+use PhpParser\Node\Expr\Cast\String_;
+
 class MyFunction
 {
     public static function generateLetterNumber($lastNumber = 0, $numberingRule = '<number>/DUMMY/GCLIT/<year>')
@@ -45,5 +48,11 @@ class MyFunction
     public static function generateLetterSlug(String $letterNumber)
     {
         return str_replace('/', '-', $letterNumber);
+    }
+
+    public static function generateLetterArchiveName(String $letterNumber, String $letterSubject, String $extention)
+    {
+        $letterNumber = str_replace('/', '.', $letterNumber);
+        return $letterNumber . '-' . $letterSubject . '.' . $extention;
     }
 }

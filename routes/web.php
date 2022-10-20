@@ -26,3 +26,4 @@ Route::get('/', function () {
 Route::resource('letter', LettersController::class);
 Route::get('letter/type/{typeCode}', [LettersController::class, 'typeShow'])->name('letter.type');
 Route::post('letter/cancel', [LettersController::class, 'cancel'])->name('letter.cancel');
+Route::post('letter/upload', [LettersController::class, 'upload'])->name('letter.upload');

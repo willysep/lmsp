@@ -135,4 +135,30 @@ class LettersController extends Controller
             return $th->getMessage();
         }
     }
+
+    public function upload(Request $request)
+    {
+        $validatedData = $request->validate([
+            'slug' => ['required', 'max:20'],
+            'archive' => ['required', 'mimes:pdf,jpg,zip', 'file', 'max:10240'],
+        ]);
+        try {
+            if (!$request->hasFile('archive')) {
+                return redirect()->route('letter.show', $validatedData['slug'])->with('failed',  'no file uploaded');
+            }
+            $extension = $request->file('archive')->getClientOriginalExtension();
+            $letter = Letters::where('slug', $validatedData['slug'])->get()->first();
+            $letter->archive = $request->file('archive')
+                ->storeAs('letters', MyFunction::generateLetterArchiveName(
+                    $letter->letterNumber,
+                    $letter->subject,
+                    $extension
+                ));
+            $letter->statusID = 3;
+            $letter->save();
+            return redirect()->route('letter.show', $validatedData['slug'])->with('success', 'Your archive has been uploaded successfully');
+        } catch (\Throwable $th) {
+            return redirect()->route('letter.show', $validatedData['slug'])->with('failed',  $th->getMessage());
+        }
+    }
 }

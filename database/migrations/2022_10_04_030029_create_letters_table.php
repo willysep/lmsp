@@ -17,9 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('typeID')->constrained('letter_types');
             $table->string('subject');
+            $table->string('recipient');
             $table->string('letterNumber');
             $table->string('slug')->unique();
-            $table->string('recipient');
+            $table->string('archive')->nullable();
             $table->integer('userID');
             $table->foreignId('statusID')->constrained('letter_statuses');
             $table->softDeletes();
